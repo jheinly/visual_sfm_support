@@ -1,6 +1,6 @@
 function [features, descriptors] = parse_sift(sift_filepath)
 
-    % features    = 5   x N, single, (x, y, color, scale, orientation)
+    % features    = 4   x N, single, (x, y, scale, orientation)
     % descriptors = 128 x N, uint8
 
     features = [];
@@ -44,6 +44,10 @@ function [features, descriptors] = parse_sift(sift_filepath)
     % Read the file's contents.
     features = fread(file, [5, num_features], '*single');
     descriptors = fread(file, [128, num_features], '*uint8');
+    
+    % Discard the color information embedded in the 3rd dimension of the
+    % features vector.
+    features(3,:) = [];
 
     fclose(file);
 
