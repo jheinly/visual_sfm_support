@@ -11,30 +11,37 @@ function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath)
         return
     end
 
+    % Get the folder that contains the NVM file.
     [nvm_folder, ~, ~] = fileparts(nvm_filepath);
 
+    % Read the camera data from the NVM file.
     num_cameras = fscanf(file, '%d', 1);
     raw_camera_data = textscan(file, '%s %f %f %f %f %f %f %f %f %f %f', num_cameras);
 
-    camera_names    = raw_camera_data{1}';
-    camera_paths    = cell(size(camera_names));
-    camera_focals   = raw_camera_data{2}';
-    camera_quats    = [raw_camera_data{3}'; raw_camera_data{4}'; raw_camera_data{5}'; raw_camera_data{6}'];
-    camera_centers  = [raw_camera_data{7}'; raw_camera_data{8}'; raw_camera_data{9}'];
-    camera_distorts = [raw_camera_data{10}'; raw_camera_data{11}'];
+    camera_names   = raw_camera_data{1}';
+    camera_focals  = raw_camera_data{2}';
+    camera_quats   = [raw_camera_data{3}'; raw_camera_data{4}'; raw_camera_data{5}'; raw_camera_data{6}'];
+    camera_centers = [raw_camera_data{7}'; raw_camera_data{8}'; raw_camera_data{9}'];
 
+    % Ignore the camera distortion parameters in the NVM file.
+    %camera_distorts = [raw_camera_data{10}'; raw_camera_data{11}'];
+
+    % Preallocate storage.
+    camera_paths = cell(1, num_cameras);
     image_dimensions = zeros(2, num_cameras);
     camera_orientations = cell(1, num_cameras);
 
     for i = 1:num_cameras
-        % TODO: check to make sure that the path is constructed correctly.
+        % Get the path and basename of this camera's image.
         camera_paths{i} = fullfile(nvm_folder, camera_names{i});
         [path, name, ext] = fileparts(camera_names{i});
         camera_names{i} = name;
 
+        % Compute the camera's orientation matrix.
         camera_orientations{i} = quaternion_to_matrix(camera_quats(:,i));
         camera_orientations{i} = camera_orientations{i}';
 
+        % Get the dimensions of this camera's image.
         info = imfinfo(camera_paths{i});
         width = info.Width;
         height = info.Height;
@@ -52,6 +59,7 @@ function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath)
 
     num_points = fscanf(file, '%d', 1);
 
+    % Preallocate storage.
     point_xyzs = zeros(3, num_points);
     point_rgbs = zeros(3, num_points);
     point_observations = cell(1, num_points);
