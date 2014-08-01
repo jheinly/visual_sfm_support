@@ -1,9 +1,9 @@
-function [features, descriptors] = parse_sift(sift_filepath)
+function [keypoints, descriptors] = parse_sift(sift_filepath)
 
-    % features    = 4   x N, single, (x, y, scale, orientation)
+    % keypoints   = 4   x N, single, (x, y, scale, orientation)
     % descriptors = 128 x N, uint8
 
-    features = [];
+    keypoints = [];
     descriptors = [];
 
     % Attempt to open the file for reading.
@@ -42,12 +42,12 @@ function [features, descriptors] = parse_sift(sift_filepath)
     end
 
     % Read the file's contents.
-    features = fread(file, [5, num_features], '*single');
+    keypoints = fread(file, [5, num_features], '*single');
     descriptors = fread(file, [128, num_features], '*uint8');
 
     % Discard the color information embedded in the 3rd dimension of the
-    % features vector.
-    features(3,:) = [];
+    % keypoints vector.
+    keypoints(3,:) = [];
 
     fclose(file);
 
