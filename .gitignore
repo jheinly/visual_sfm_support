@@ -1,0 +1,6 @@
+# Python temporary files.
+*.pyc
+__pycache__
+
+# MATLAB temporary files.
+*.asv
