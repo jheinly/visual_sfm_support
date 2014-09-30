@@ -3,21 +3,23 @@ function [] = plot_nvm(camera_data, point_data, camera_size, camera_color, point
     if ~exist('camera_size', 'var')
         camera_size = -1;
     end
-    
+
+    % If the camera size is not specified, set it based on the extent
+    % of the camera positions.
     if camera_size <= 0
         min_center = min(camera_data.centers, [], 2);
         max_center = max(camera_data.centers, [], 2);
         camera_size = 0.04 * norm([min_center max_center]);
     end
-    
+
     if ~exist('camera_color', 'var')
         camera_color = 'k';
     end
-    
+
     if ~exist('point_color', 'var')
         point_color = 'k';
     end
-    
+
     hold on
     axis equal
     plot_cameras(camera_data, camera_size, camera_color);

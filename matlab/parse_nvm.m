@@ -2,7 +2,7 @@ function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath,
 
     % NOTE: This function only reads the first model from the NVM file. All other
     %       models contained within the file are ignored.
-    
+
     if ~exist('read_image_dimensions', 'var')
         read_image_dimensions = true;
     end
