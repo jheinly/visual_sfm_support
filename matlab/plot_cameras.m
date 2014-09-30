@@ -1,6 +1,10 @@
 function [] = plot_cameras(camera_data, camera_size, camera_color)
 
     if ~exist('camera_size', 'var')
+        camera_size = -1;
+    end
+    
+    if camera_size <= 0
         min_center = min(camera_data.centers, [], 2);
         max_center = max(camera_data.centers, [], 2);
         camera_size = 0.04 * norm([min_center max_center]);
