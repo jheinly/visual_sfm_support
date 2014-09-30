@@ -1,7 +1,11 @@
-function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath)
+function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath, read_image_dimensions)
 
     % NOTE: This function only reads the first model from the NVM file. All other
     %       models contained within the file are ignored.
+    
+    if ~exist('read_image_dimensions', 'var')
+        read_image_dimensions = true;
+    end
 
     file = fopen(nvm_filepath, 'r');
     line = strtrim(fgets(file));
@@ -41,11 +45,13 @@ function [camera_data, point_data, point_observations] = parse_nvm(nvm_filepath)
         camera_orientations{i} = quaternion_to_matrix(camera_quats(:,i));
         camera_orientations{i} = camera_orientations{i}';
 
-        % Get the dimensions of this camera's image.
-        info = imfinfo(camera_paths{i});
-        width = info.Width;
-        height = info.Height;
-        image_dimensions(:,i) = [width; height];
+        if read_image_dimensions
+            % Get the dimensions of this camera's image.
+            info = imfinfo(camera_paths{i});
+            width = info.Width;
+            height = info.Height;
+            image_dimensions(:,i) = [width; height];
+        end
     end
 
     camera_data = struct(...
