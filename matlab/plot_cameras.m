@@ -1,20 +1,18 @@
-function [] = plot_cameras(camera_data, camera_size, camera_color)
+function [] = plot_cameras(camera_data, camera_relative_size, camera_color)
 
-    if ~exist('camera_size', 'var')
-        camera_size = -1;
+    if ~exist('camera_relative_size', 'var') ||...
+            isempty(camera_relative_size) ||...
+            camera_relative_size <= 0
+        camera_relative_size = 0.02;
     end
 
-    % If the camera size is not specified, set it based on the extent
-    % of the camera positions.
-    if camera_size <= 0
-        min_center = min(camera_data.centers, [], 2);
-        max_center = max(camera_data.centers, [], 2);
-        camera_size = 0.04 * norm([min_center max_center]);
-    end
-
-    if ~exist('camera_color', 'var')
+    if ~exist('camera_color', 'var') || isempty(camera_color)
         camera_color = 'k';
     end
+
+    min_center = min(camera_data.centers, [], 2);
+    max_center = max(camera_data.centers, [], 2);
+    camera_size = camera_relative_size * norm([min_center max_center]);
 
     num_cameras = camera_data.num_cameras;
     centers = camera_data.centers;
@@ -30,7 +28,6 @@ function [] = plot_cameras(camera_data, camera_size, camera_color)
     end
 
     hold on
-    axis equal
     % Construct the camera viewing frusta (pyramids).
     line(...
         [camera_corners(10,:); camera_corners(1,:); centers(1,:); camera_corners(4,:); camera_corners(1,:)],...
@@ -42,5 +39,8 @@ function [] = plot_cameras(camera_data, camera_size, camera_color)
         [camera_corners(5,:); camera_corners(8,:); centers(2,:); camera_corners(11,:); camera_corners(8,:)],...
         [camera_corners(6,:); camera_corners(9,:); centers(3,:); camera_corners(12,:); camera_corners(9,:)],...
         'LineWidth', 1, 'Color', camera_color);
+    axis equal
+    axis vis3d
+    hold off
 
 end
